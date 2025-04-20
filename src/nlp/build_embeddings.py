@@ -1,6 +1,6 @@
-import os
 import tqdm
 import typer
+import shutil
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -9,6 +9,8 @@ from config import (
     PROCESSED_DATA_DIR,
     PROCESSED_FILE_NAME
 )
+import warnings
+warnings.simplefilter("ignore", category=FutureWarning)
 
 app = typer.Typer(help="Build embeddings for the arXiv metadata dataset.")
 
@@ -22,19 +24,19 @@ INDEX_PATH = EMBEDDINGS_DIR / "index.csv"
 
 @app.command()
 def build(
-    model_name: typer.Option(
+    model_name: str = typer.Option(
         default="sentence-transformers/all-MiniLM-L6-v2",
         help="The name of the SentenceTransformer model to use.",
     ),
-    batch_size: typer.Option(
+    batch_size: int = typer.Option(
         default=32,
         help="The batch size for embedding generation.",
     ),
-    input_path: typer.Option(
+    input_path: str = typer.Option(
         default=PROCESSED_DATA_DIR / PROCESSED_FILE_NAME,
         help="The path to the input file containing the text data.",
     ),
-    max_length: typer.Option(
+    max_length: int = typer.Option(
         default=512,
         help="The maximum length of the input text.",
     ),
@@ -56,7 +58,7 @@ def build(
         max_length (int): The maximum length of the input text.
     """
     typer.echo(f"Loading data from {input_path}...")
-    df = pd.read_csv(input_path)
+    df = pd.read_csv(input_path, dtype=str)
     df.dropna(subset=["title", "abstract"], inplace=True)
     df["text"] = df["title"] + ". " + df["abstract"]
     
@@ -86,6 +88,29 @@ def build(
     del df
     del model
     del embeddings
+
+@app.command()
+def clean():
+    """Remove the embeddings directory and its contents."""
+    if EMBEDDINGS_DIR.exists():
+        typer.echo(f"Removing {EMBEDDINGS_DIR}...")
+        for item in EMBEDDINGS_DIR.iterdir():
+            if item.is_file():
+                item.unlink()
+            elif item.is_dir():
+                shutil.rmtree(item)
+        EMBEDDINGS_DIR.rmdir()
+    else:
+        typer.echo(f"{EMBEDDINGS_DIR} does not exist.")
+
+@app.command()
+def main():
+    """
+    Main function to run the build command.
+    This function is a wrapper around the build command and is used to
+    provide a simple entry point for running the script from the command line.
+    """
+    build()
 
 if __name__ == "__main__":
     app()
