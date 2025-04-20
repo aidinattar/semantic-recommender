@@ -69,6 +69,7 @@ def extract():
         ZIP_PATH.unlink()
 
 
+@app.command()
 def process():
     """Extract id, title, abstract, authors, categories and update_date and save it in csv and json format."""
     import json
@@ -102,6 +103,12 @@ def process():
             total=sum(1 for _ in open(RAW_DATA_DIR / RAW_FILE_NAME, "r")),
             desc="Processing",
             unit="record",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}] {postfix}",
+            ncols=125,
+            ascii=True,
+            colour="green",
+            unit_scale=True,
+            unit_divisor=1024,
         )
         for line in iterator:
             try:
@@ -125,7 +132,8 @@ def process():
                     "update_date": update_date,
                 }
                 csv_writer.writerow(record)
-                iterator.set_postfix({"title": title, "abstract": abstract})
+                postfix = f"{categories}"[:30].ljust(30)
+                iterator.set_postfix_str(postfix)
             except json.JSONDecodeError:
                 continue
 
