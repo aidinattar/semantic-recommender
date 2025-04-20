@@ -5,6 +5,8 @@
 #include "search_engine.hpp"
 #include "utils.hpp"
 
+#include <iostream>
+
 SearchEngine::SearchEngine(
     const std::string& vectors_path,
     const std::string&   index_path
@@ -17,17 +19,25 @@ SearchEngine::SearchEngine(
     while (getline(vfile, vline) && getline(ifile, iline)) {
         std::stringstream vss(vline);
         std::stringstream iss(iline);
-        std::string val, id, title, cat;
-        std::vector<float> vec;
+        std::string val, id, title, cat, update_date, authors;
+        // std::vector<float> vec;
 
-        while (getline(vss, val, ',')) {
-            vec.push_back(std::stof(val));
-        }
+        // while (getline(vss, val, ',')) {
+        //     std::cout << val << std::endl;
+        //     vec.push_back(std::stof(val));
+        // }
 
+        std::vector<float> vec = parse_vector(vline);
+        // std::cout << "Parsed vector size:\t" << vec.size() << std::endl;
+
+        // Read the index line
         getline(iss, id, ',');
         getline(iss, title, ',');
+        getline(iss, cat, ',');
+        getline(iss, update_date, ',');
+        getline(iss, authors, ',');
 
-        papers_.push_back({id, title, vec});
+        papers_.push_back({id, title, cat, update_date, authors, vec});
     }
 }
 

@@ -1,5 +1,8 @@
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 #include "utils.hpp"
 
 float cosine_similarity(const std::vector<float>& vec1, const std::vector<float>& vec2) {
@@ -15,4 +18,26 @@ float cosine_similarity(const std::vector<float>& vec1, const std::vector<float>
         norm_b += vec2[i] * vec2[i];
     }
     return dot_product / (std::sqrt(norm_a) * std::sqrt(norm_b));
+}
+
+std::vector<float> parse_vector(const std::string& vec_str) {
+    std::vector<float> result;
+    std::string token;
+    std::stringstream ss(vec_str);
+
+    std::ofstream log("log.txt", std::ios_base::app);
+
+    while (std::getline(ss, token, ',')) {
+        try {
+            result.push_back(std::stof(token));
+        } catch (const std::invalid_argument&) {
+            log << "Warning: Invalid value '" << token << "' in vector: " << vec_str << "\n";
+            // std::cerr << "⚠️ Warning: invalid value '" << token << "' in vector string: " << vec_str << "\n";
+        } catch (const std::out_of_range&) {
+            log << "Warning: value '" << token << "' out of range in vector string: " << vec_str << "\n";
+            // std::cerr << "⚠️ Warning: value '" << token << "' out of range in vector string: " << vec_str << "\n";
+        }
+    }
+
+    return result;
 }
