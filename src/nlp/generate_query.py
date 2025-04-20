@@ -9,7 +9,7 @@ warnings.simplefilter("ignore", category=FutureWarning)
 app = typer.Typer(help="Generate embeddings for a text query and save them to disk.")
 
 DEFAULT_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-OUTPUT_PATH = Path("embeddings/query.csv")
+OUTPUT_PATH = Path("embeddings/queries/query.csv")
 
 @app.command()
 def generate(
@@ -42,7 +42,7 @@ def generate(
     embedding = model.encode([query], show_progress_bar=True, device="cuda" if torch.cuda.is_available() else "cpu")
     
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    np.save(output_path, embedding)
+    np.savetxt(output_path, embedding, delimiter=",")
     typer.echo(f"Embeddings saved to {output_path}")
 
 @app.command()
