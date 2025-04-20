@@ -1,8 +1,8 @@
-import tqdm
 import typer
 import shutil
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from config import (
@@ -71,7 +71,18 @@ def build(
 
     # Generate embeddings in batches
     embeddings = []
-    for i in tqdm.tqdm(range(0, len(df), batch_size), desc="Generating embeddings"):
+    iterator = tqdm(
+        range(0, len(df), batch_size),
+        desc="Generating embeddings",
+        total=len(df) // batch_size + 1,
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}] {postfix}",
+        ncols=125,
+        ascii=True,
+        colour="green",
+        unit_scale=True,
+        unit_divisor=1024,
+    )
+    for i in iterator:
         batch = df.iloc[i : i + batch_size]
         texts = batch["text"].tolist()
         batch_embeddings = model.encode(texts, show_progress_bar=False)
