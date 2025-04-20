@@ -18,7 +18,7 @@ app = typer.Typer(help="Build embeddings for the arXiv metadata dataset.")
 # Default paths
 INPUT_PATH = PROCESSED_DATA_DIR / PROCESSED_FILE_NAME
 EMBEDDINGS_DIR = Path("embeddings")
-VECTORS_PATH = EMBEDDINGS_DIR / "vectors.npy"
+VECTORS_PATH = EMBEDDINGS_DIR / "vectors.csv"
 INDEX_PATH = EMBEDDINGS_DIR / "index.csv"
 
 
@@ -89,7 +89,7 @@ def build(
         embeddings.append(batch_embeddings)
     embeddings = np.vstack(embeddings)
 
-    np.save(VECTORS_PATH, embeddings)
+    np.savetxt(VECTORS_PATH, embeddings, delimiter=",")
     df[["id", "title", "categories", "update_date", "authors"]].to_csv(INDEX_PATH, index=False)
 
     typer.echo(
