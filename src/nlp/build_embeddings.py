@@ -90,7 +90,10 @@ def build(
     embeddings = np.vstack(embeddings)
 
     np.savetxt(VECTORS_PATH, embeddings, delimiter=",")
+    SEP = '\x1f'
+    df.replace({r'\r\n|\r|\n': ' '}, regex=True, inplace=True)
     df[["id", "title", "categories", "update_date", "authors"]].to_csv(INDEX_PATH, index=False)
+
 
     typer.echo(
         f"Embeddings saved to {VECTORS_PATH} and metadata saved to {INDEX_PATH}."
