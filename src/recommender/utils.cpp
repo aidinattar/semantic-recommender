@@ -5,7 +5,10 @@
 #include <sstream>
 #include "utils.hpp"
 
+#include <iostream>
+
 float cosine_similarity(const std::vector<float>& vec1, const std::vector<float>& vec2) {
+    // std::cout << vec1.size() << " " << vec2.size() << std::endl;
     if (vec1.size() != vec2.size()) {
         throw std::invalid_argument("Vectors must be of the same size");
     }
@@ -32,10 +35,10 @@ std::vector<float> parse_vector(const std::string& vec_str) {
             result.push_back(std::stof(token));
         } catch (const std::invalid_argument&) {
             log << "Warning: Invalid value '" << token << "' in vector: " << vec_str << "\n";
-            // std::cerr << "⚠️ Warning: invalid value '" << token << "' in vector string: " << vec_str << "\n";
+            result.push_back(0.0f); // fallback
         } catch (const std::out_of_range&) {
             log << "Warning: value '" << token << "' out of range in vector string: " << vec_str << "\n";
-            // std::cerr << "⚠️ Warning: value '" << token << "' out of range in vector string: " << vec_str << "\n";
+            result.push_back(0.0f); // fallback
         }
     }
 

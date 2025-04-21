@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include "search_engine.hpp"
 #include "utils.hpp"
 
@@ -31,12 +32,18 @@ SearchEngine::SearchEngine(
         // std::cout << "Parsed vector size:\t" << vec.size() << std::endl;
 
         // Read the index line
-        getline(iss, id, ',');
-        getline(iss, title, ',');
-        getline(iss, cat, ',');
-        getline(iss, update_date, ',');
-        getline(iss, authors, ',');
-
+        const char SEP = '\x1f';
+        std::getline(iss, id, SEP);
+        std::getline(iss, title, SEP);
+        std::getline(iss, cat, SEP);
+        std::getline(iss, update_date, SEP);
+        std::getline(iss, authors, SEP);
+        // iss >> std::quoted(id, ',');
+        // iss >> std::quoted(title, ',');
+        // iss >> std::quoted(cat, ',');
+        // iss >> std::quoted(update_date, ',');
+        // iss >> std::quoted(authors, ',');
+        // std::cout << id << " STOP " << title << " STOP " << cat << " STOP " << update_date << " STOP " << authors << std::endl;
         papers_.push_back({id, title, cat, update_date, authors, vec});
     }
 }
