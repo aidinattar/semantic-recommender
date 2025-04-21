@@ -44,3 +44,19 @@ std::vector<float> parse_vector(const std::string& vec_str) {
 
     return result;
 }
+
+
+std::vector<std::vector<float>> load_vectors_bin(const std::string& filename, size_t num_vectors, size_t dim) {
+    std::vector<std::vector<float>> vectors(num_vectors, std::vector<float>(dim));
+    std::ifstream file(filename, std::ios::binary);
+    
+    if (!file) {
+        throw std::runtime_error("❌ Unable to open binary file: " + filename);
+    }
+
+    for (size_t i = 0; i < num_vectors; ++i) {
+        file.read(reinterpret_cast<char*>(vectors[i].data()), dim * sizeof(float));
+    }
+
+    return vectors;
+}
