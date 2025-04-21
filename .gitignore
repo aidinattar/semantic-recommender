@@ -205,3 +205,8 @@ pyrightconfig.json
 data/raw/*
 data/processed/*
 embeddings/*
+src/recommender/log.txt
+src/recommender/semantic_search
+embeddings/index.csv
+embeddings/vectors.npy
+src/recommender/build/
