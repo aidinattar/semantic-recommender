@@ -6,54 +6,12 @@
 #include "search_engine.hpp"
 #include "utils.hpp"
 
-#include <iostream>
-
-// SearchEngine::SearchEngine(
-//     const std::string& vectors_path,
-//     const std::string&   index_path
-// ) {
-//     std::ifstream vfile(vectors_path);
-//     std::ifstream ifile(index_path);
-
-//     std::string vline, iline;
-//     getline(ifile, iline); // skip header
-//     while (getline(vfile, vline) && getline(ifile, iline)) {
-//         std::stringstream vss(vline);
-//         std::stringstream iss(iline);
-//         std::string val, id, title, cat, update_date, authors;
-//         // std::vector<float> vec;
-
-//         // while (getline(vss, val, ',')) {
-//         //     std::cout << val << std::endl;
-//         //     vec.push_back(std::stof(val));
-//         // }
-
-//         std::vector<float> vec = parse_vector(vline);
-//         // std::cout << "Parsed vector size:\t" << vec.size() << std::endl;
-
-//         // Read the index line
-//         const char SEP = '\x1f';
-//         std::getline(iss, id, SEP);
-//         std::getline(iss, title, SEP);
-//         std::getline(iss, cat, SEP);
-//         std::getline(iss, update_date, SEP);
-//         std::getline(iss, authors, SEP);
-//         // iss >> std::quoted(id, ','); 
-//         // iss >> std::quoted(title, ',');
-//         // iss >> std::quoted(cat, ',');
-//         // iss >> std::quoted(update_date, ',');
-//         // iss >> std::quoted(authors, ',');
-//         // std::cout << id << " STOP " << title << " STOP " << cat << " STOP " << update_date << " STOP " << authors << std::endl;
-//         papers_.push_back({id, title, cat, update_date, authors, vec});
-//     }
-// }
-
 
 SearchEngine::SearchEngine(
     const std::string& vectors_path,
     const std::string& index_path
 ) {
-    // 1. Leggi tutti i metadati da index.csv
+    // 1. Read metadata from index file
     std::ifstream ifile(index_path);
     if (!ifile) throw std::runtime_error("Cannot open index file: " + index_path);
 
@@ -83,7 +41,7 @@ SearchEngine::SearchEngine(
     size_t num_vectors = ids.size();
     size_t dim = 384;
 
-    // 2. Leggi i vettori binari
+    // 2. Read vectors from binary file
     std::ifstream vfile(vectors_path, std::ios::binary);
     if (!vfile) throw std::runtime_error("Cannot open vectors file: " + vectors_path);
 
